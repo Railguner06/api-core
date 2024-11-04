@@ -1,0 +1,19 @@
+server:
+  port: 8082
+
+dubbo:
+  application:
+    name: api-gateway-test
+    version: 1.0.0
+  registry:
+    address: zookeeper://127.0.0.1:2181
+    timeout: 60000
+  protocol:
+    name: dubbo
+    port: 20881
+  scan:
+    base-packages: cn.bugstack.gateway.rpc
+  config-center:
+    timeout: 60000
+  metadata-report:
+    timeout: 60000
