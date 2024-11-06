@@ -3,7 +3,8 @@ package org.example.bind;
 import net.sf.cglib.core.Signature;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.InterfaceMaker;
-import org.apache.dubbo.rpc.service.GenericService;
+import org.example.mapping.HttpStatement;
+import org.example.session.GatewaySession;
 import org.objectweb.asm.Type;
 
 import java.util.Map;
@@ -12,26 +13,24 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 泛化调用静态代理工厂
  */
-public class GenericReferenceProxyFactory {
+public class MapperProxyFactory {
 
-    /**
-     * RPC 泛化调用服务
-     */
-    private final GenericService genericService;
+    private String uri;
+
+    public MapperProxyFactory(String uri) {
+        this.uri = uri;
+    }
 
     private final Map<String, IGenericReference> genericReferenceCache = new ConcurrentHashMap<>();
 
-    public GenericReferenceProxyFactory(GenericService genericService) {
-        this.genericService = genericService;
-    }
-
-    public IGenericReference newInstance(String method) {
-        return genericReferenceCache.computeIfAbsent(method, k -> {
+    public IGenericReference newInstance(GatewaySession gatewaySession) {
+        return genericReferenceCache.computeIfAbsent(uri, k -> {
+            HttpStatement httpStatement = gatewaySession.getConfiguration().getHttpStatement(uri);
             // 泛化调用
-            GenericReferenceProxy genericReferenceProxy = new GenericReferenceProxy(genericService, method);
+            MapperProxy genericReferenceProxy = new MapperProxy(gatewaySession, uri);
             // 创建接口
             InterfaceMaker interfaceMaker = new InterfaceMaker();
-            interfaceMaker.add(new Signature(method, Type.getType(String.class), new Type[]{Type.getType(String.class)}), null);
+            interfaceMaker.add(new Signature(httpStatement.getMethodName(), Type.getType(String.class), new Type[]{Type.getType(String.class)}), null);
             Class<?> interfaceClass = interfaceMaker.create();
             // 代理对象
             Enhancer enhancer = new Enhancer();

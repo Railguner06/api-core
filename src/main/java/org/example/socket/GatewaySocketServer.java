@@ -1,4 +1,4 @@
-package org.example.session;
+package org.example.socket;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -7,6 +7,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.example.session.defaults.DefaultGatewaySessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,18 +17,18 @@ import java.util.concurrent.Callable;
 /**
  * 网关会话服务
  */
-public class SessionServer implements Callable<Channel> {
+public class GatewaySocketServer implements Callable<Channel> {
 
-    private final Logger logger = LoggerFactory.getLogger(SessionServer.class);
+    private final Logger logger = LoggerFactory.getLogger(GatewaySocketServer.class);
 
-    private Configuration configuration;
+    private DefaultGatewaySessionFactory gatewaySessionFactory;
 
     private final EventLoopGroup boss = new NioEventLoopGroup(1);
     private final EventLoopGroup work = new NioEventLoopGroup();
     private Channel channel;
 
-    public SessionServer(Configuration configuration) {
-        this.configuration = configuration;
+    public GatewaySocketServer(DefaultGatewaySessionFactory gatewaySessionFactory) {
+        this.gatewaySessionFactory = gatewaySessionFactory;
     }
 
     @Override
@@ -38,7 +39,7 @@ public class SessionServer implements Callable<Channel> {
             b.group(boss, work)
                     .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG, 128)
-                    .childHandler(new SessionChannelInitializer(configuration));
+                    .childHandler(new GatewayChannelInitializer(gatewaySessionFactory));
 
             channelFuture = b.bind(new InetSocketAddress(7397)).syncUninterruptibly();
             this.channel = channelFuture.channel();

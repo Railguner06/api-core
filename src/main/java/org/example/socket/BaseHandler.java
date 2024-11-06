@@ -1,4 +1,4 @@
-package org.example.session;
+package org.example.socket;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
