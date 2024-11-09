@@ -22,19 +22,43 @@ public class ApiTest {
     private final Logger logger = LoggerFactory.getLogger(ApiTest.class);
 
     /**
-     * 测试：http://localhost:7397/wg/activity/sayHi
+     * 测试：
+     * http://localhost:7397/wg/activity/sayHi
+     * 参数：
+     * {
+     *     "str": "10001"
+     * }
+     *
+     * http://localhost:7397/wg/activity/index
+     * 参数：
+     * {
+     *     "name":"小傅哥",
+     *     "uid":"10001"
+     * }
      */
     @Test
     public void test_gateway() throws InterruptedException, ExecutionException {
         // 1. 创建配置信息加载注册
         Configuration configuration = new Configuration();
-        HttpStatement httpStatement = new HttpStatement(
+
+        HttpStatement httpStatement01 = new HttpStatement(
                 "api-gateway-test",
                 "cn.bugstack.gateway.rpc.IActivityBooth",
                 "sayHi",
+                "java.lang.String",
                 "/wg/activity/sayHi",
                 HttpCommandType.GET);
-        configuration.addMapper(httpStatement);
+
+        HttpStatement httpStatement02 = new HttpStatement(
+                "api-gateway-test",
+                "cn.bugstack.gateway.rpc.IActivityBooth",
+                "insert",
+                "cn.bugstack.gateway.rpc.dto.XReq",
+                "/wg/activity/insert",
+                HttpCommandType.POST);
+
+        configuration.addMapper(httpStatement01);
+        configuration.addMapper(httpStatement02);
 
         // 2. 基于配置构建会话工厂
         DefaultGatewaySessionFactory gatewaySessionFactory = new DefaultGatewaySessionFactory(configuration);
@@ -57,3 +81,4 @@ public class ApiTest {
     }
 
 }
+

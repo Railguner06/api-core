@@ -22,6 +22,7 @@ public class MapperRegistry {
     private final Map<String, MapperProxyFactory> knownMappers = new HashMap<>();
 
     public IGenericReference getMapper(String uri, GatewaySession gatewaySession) {
+        //final保证一个uri只会被注册一次
         final MapperProxyFactory mapperProxyFactory = knownMappers.get(uri);
         if (mapperProxyFactory == null) {
             throw new RuntimeException("Uri " + uri + " is not known to the MapperRegistry.");
