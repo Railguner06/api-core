@@ -30,25 +30,32 @@ public class Configuration {
     // RPC 泛化服务配置项 cn.bugstack.gateway.rpc.IActivityBooth
     private final Map<String, ReferenceConfig<GenericService>> referenceConfigMap = new HashMap<>();
 
-    public Configuration() {
-        // TODO 后期从配置中获取
-        ApplicationConfig application = new ApplicationConfig();
-        application.setName("api-gateway-test");
-        application.setQosEnable(false);
+    public Configuration() {}
 
-        RegistryConfig registry = new RegistryConfig();
-        registry.setAddress("zookeeper://127.0.0.1:2181");
-        registry.setRegister(false);
+    public synchronized void registryConfig(String applicationName, String address, String interfaceName, String version) {
+        if (applicationConfigMap.get(applicationName) == null) {
+            ApplicationConfig application = new ApplicationConfig();
+            application.setName(applicationName);
+            application.setQosEnable(false);
+            applicationConfigMap.put(applicationName, application);
+        }
 
-        ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
-        reference.setInterface("cn.bugstack.gateway.rpc.IActivityBooth");
-        reference.setVersion("1.0.0");
-        reference.setGeneric("true");
+        if (registryConfigMap.get(applicationName) == null) {
+            RegistryConfig registry = new RegistryConfig();
+            registry.setAddress(address);
+            registry.setRegister(false);
+            registryConfigMap.put(applicationName, registry);
+        }
 
-        applicationConfigMap.put("api-gateway-test", application);
-        registryConfigMap.put("api-gateway-test", registry);
-        referenceConfigMap.put("cn.bugstack.gateway.rpc.IActivityBooth", reference);
+        if (referenceConfigMap.get(interfaceName) == null) {
+            ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
+            reference.setInterface(interfaceName);
+            reference.setVersion(version);
+            reference.setGeneric("true");
+            referenceConfigMap.put(interfaceName, reference);
+        }
     }
+
 
     public ApplicationConfig getApplicationConfig(String applicationName) {
         return applicationConfigMap.get(applicationName);
@@ -83,5 +90,6 @@ public class Configuration {
     }
 
 }
+
 
 

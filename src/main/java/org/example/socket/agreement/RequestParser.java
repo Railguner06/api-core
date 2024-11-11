@@ -80,7 +80,18 @@ public class RequestParser {
         throw new RuntimeException("未实现的请求类型 HttpMethod：" + method);
     }
 
+    /*
+     * POST /wg/activity/insert HTTP/1.1
+     * Content-Type: application/json
+     * User-Agent: PostmanRuntime/7.29.2
+     * Postman-Token: f535ef0b-a257-4bf8-9542-4291d925de32
+     * Host: localhost:7397
+     * Accept-Encoding: gzip, deflate, br
+     * Connection: keep-alive
+     * Content-Length: 45
+     */
     private String getContentType() {
+        System.out.println(request.headers());
         Optional<Map.Entry<String, String>> header = request.headers().entries().stream().filter(
                 val -> val.getKey().equals("Content-Type")
         ).findAny();
@@ -97,4 +108,5 @@ public class RequestParser {
     }
 
 }
+
 
