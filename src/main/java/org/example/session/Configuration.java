@@ -6,6 +6,9 @@ import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.rpc.service.GenericService;
 import org.example.bind.IGenericReference;
 import org.example.bind.MapperRegistry;
+import org.example.datasource.Connection;
+import org.example.executor.Executor;
+import org.example.executor.SimpleExecutor;
 import org.example.mapping.HttpStatement;
 
 import java.util.HashMap;
@@ -75,5 +78,10 @@ public class Configuration {
         return httpStatements.get(uri);
     }
 
+    public Executor newExecutor(Connection connection) {
+        return new SimpleExecutor(this, connection);
+    }
+
 }
+
 

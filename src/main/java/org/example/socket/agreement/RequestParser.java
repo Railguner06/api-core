@@ -26,9 +26,21 @@ public class RequestParser {
         this.request = request;
     }
 
+    /**
+     * 简单处理请求路径
+     */
+    public String getUri() {
+        String uri = request.uri();
+        int idx = uri.indexOf("?");
+        uri = idx > 0 ? uri.substring(0, idx) : uri;
+        if (uri.equals("/favicon.ico")) return null;
+        return uri;
+    }
+
+    /**
+     * 解析封装请求参数
+     */
     public Map<String, Object> parse() {
-        // 获取 Content-type
-        String contentType = getContentType();
         // 获取请求类型
         HttpMethod method = request.method();
         if (HttpMethod.GET == method) {
@@ -37,6 +49,8 @@ public class RequestParser {
             decoder.parameters().forEach((key, value) -> parameterMap.put(key, value.get(0)));
             return parameterMap;
         } else if (HttpMethod.POST == method) {
+            // 获取 Content-type
+            String contentType = getContentType();
             switch (contentType) {
                 case "multipart/form-data":
                     Map<String, Object> parameterMap = new HashMap<>();
@@ -57,6 +71,8 @@ public class RequestParser {
                         return JSON.parseObject(content);
                     }
                     break;
+                case "none":
+                    return new HashMap<>();
                 default:
                     throw new RuntimeException("未实现的协议类型 Content-Type：" + contentType);
             }
@@ -69,7 +85,7 @@ public class RequestParser {
                 val -> val.getKey().equals("Content-Type")
         ).findAny();
         Map.Entry<String, String> entry = header.orElse(null);
-        assert entry != null;
+        if (null == entry) return "none";
         // application/json、multipart/form-data;
         String contentType = entry.getValue();
         int idx = contentType.indexOf(";");
@@ -80,5 +96,5 @@ public class RequestParser {
         }
     }
 
-
 }
+

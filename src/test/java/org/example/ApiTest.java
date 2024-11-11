@@ -29,7 +29,7 @@ public class ApiTest {
      *     "str": "10001"
      * }
      *
-     * http://localhost:7397/wg/activity/index
+     * http://localhost:7397/wg/activity/insert
      * 参数：
      * {
      *     "name":"小傅哥",
