@@ -1,10 +1,13 @@
 package org.example.executor;
 
-import org.example.executor.result.GatewayResult;
+import org.example.executor.result.SessionResult;
 import org.example.mapping.HttpStatement;
 
 import java.util.Map;
 
+/**
+ * 执行器
+ */
 public interface Executor {
-    GatewayResult exec(HttpStatement httpStatement, Map<String,Object> params)throws Exception;
+    SessionResult exec(HttpStatement httpStatement, Map<String,Object> params) throws Exception;
 }

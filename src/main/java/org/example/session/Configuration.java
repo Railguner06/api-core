@@ -4,6 +4,8 @@ import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.rpc.service.GenericService;
+import org.example.authorization.IAuth;
+import org.example.authorization.auth.AuthService;
 import org.example.bind.IGenericReference;
 import org.example.bind.MapperRegistry;
 import org.example.datasource.Connection;
@@ -23,6 +25,8 @@ public class Configuration {
 
     private final Map<String, HttpStatement> httpStatements = new HashMap<>();
 
+    private final IAuth auth = new AuthService();
+
     // RPC 应用服务配置项 api-gateway-test
     private final Map<String, ApplicationConfig> applicationConfigMap = new HashMap<>();
     // RPC 注册中心配置项 zookeeper://127.0.0.1:2181
@@ -30,7 +34,8 @@ public class Configuration {
     // RPC 泛化服务配置项 cn.bugstack.gateway.rpc.IActivityBooth
     private final Map<String, ReferenceConfig<GenericService>> referenceConfigMap = new HashMap<>();
 
-    public Configuration() {}
+    public Configuration() {
+    }
 
     public synchronized void registryConfig(String applicationName, String address, String interfaceName, String version) {
         if (applicationConfigMap.get(applicationName) == null) {
@@ -89,7 +94,12 @@ public class Configuration {
         return new SimpleExecutor(this, connection);
     }
 
+    public boolean authValidate(String uId, String token) {
+        return auth.validate(uId, token);
+    }
+
 }
+
 
 
 

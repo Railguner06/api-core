@@ -3,6 +3,9 @@ package org.example.executor;
 import org.example.datasource.Connection;
 import org.example.session.Configuration;
 
+/**
+ * 简单执行器
+ */
 public class SimpleExecutor extends BaseExecutor {
 
     public SimpleExecutor(Configuration configuration, Connection connection) {

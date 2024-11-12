@@ -6,17 +6,22 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import org.example.session.Configuration;
 import org.example.session.defaults.DefaultGatewaySessionFactory;
+import org.example.socket.handlers.AuthorizationHandler;
 import org.example.socket.handlers.GatewayServerHandler;
+import org.example.socket.handlers.ProtocolDataHandler;
 
 /**
  * 会话管道初始化类
  */
 public class GatewayChannelInitializer extends ChannelInitializer<SocketChannel> {
 
+    private final Configuration configuration;
     private final DefaultGatewaySessionFactory gatewaySessionFactory;
 
-    public GatewayChannelInitializer(DefaultGatewaySessionFactory gatewaySessionFactory) {
+    public GatewayChannelInitializer(Configuration configuration, DefaultGatewaySessionFactory gatewaySessionFactory) {
+        this.configuration = configuration;
         this.gatewaySessionFactory = gatewaySessionFactory;
     }
 
@@ -26,8 +31,11 @@ public class GatewayChannelInitializer extends ChannelInitializer<SocketChannel>
         line.addLast(new HttpRequestDecoder());
         line.addLast(new HttpResponseEncoder());
         line.addLast(new HttpObjectAggregator(1024 * 1024));
-        line.addLast(new GatewayServerHandler(gatewaySessionFactory));
+        line.addLast(new GatewayServerHandler(configuration));
+        line.addLast(new AuthorizationHandler(configuration));
+        line.addLast(new ProtocolDataHandler(gatewaySessionFactory));
     }
 
 }
+
 

@@ -3,9 +3,12 @@ package org.example.socket.agreement;
 import com.alibaba.fastjson.JSON;
 import io.netty.handler.codec.http.*;
 
+/**
+ * 构建结果返回信息
+ */
 public class ResponseParser {
 
-    public DefaultFullHttpResponse parse(Object result) {
+    public DefaultFullHttpResponse parse(GatewayResultMessage result) {
         // 返回信息处理
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
         // 设置回写数据
@@ -27,4 +30,5 @@ public class ResponseParser {
     }
 
 }
+
 
